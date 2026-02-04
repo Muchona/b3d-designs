@@ -2,8 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
 // Dynamically import all images from the Fintan folder
-const images = import.meta.glob('../assets/Fintan/*.jpeg', { eager: true, as: 'url' });
-const galleryImages = Object.values(images);
+// Dynamically import all images from the Fintan folder
+const images = import.meta.glob('../assets/Fintan/*.jpeg', { eager: true, query: '?url', import: 'default' });
+const galleryImages = Object.values(images) as string[];
 
 export default function Gallery() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
