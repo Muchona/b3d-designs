@@ -45,7 +45,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link to="/" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); closeMenu(); }} className="flex items-center gap-3 group cursor-pointer relative z-50">
                         <img
-                            src="/logo.png"
+                            src="/b3d-designs/logo.png"
                             alt="B3D Designs"
                             className="h-10 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                         />
