@@ -10,7 +10,7 @@ export default function Footer() {
                     <div className="max-w-xs text-center md:text-left mx-auto md:mx-0">
                         <div className="flex items-center justify-center md:justify-start gap-3 mb-6">
                             <img
-                                src="/b3d-designs/logo.png"
+                                src={`${import.meta.env.BASE_URL}logo.png`}
                                 alt="B3D Designs"
                                 className="h-16 w-auto object-contain"
                             />
