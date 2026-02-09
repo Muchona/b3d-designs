@@ -4,10 +4,10 @@ export default function Footer() {
     return (
         <footer className="bg-[#0B0F19] text-white pt-20 pb-10 border-t border-white/5">
             <div className="container mx-auto px-6 md:px-12">
-                <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-8 mb-20">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-16 md:gap-8 mb-20">
 
                     {/* Brand */}
-                    <div className="max-w-xs text-center md:text-left mx-auto md:mx-0">
+                    <div className="max-w-xs text-center md:text-left mx-auto md:mx-0 mb-8 md:mb-0">
                         <div className="flex items-center justify-center md:justify-start gap-3 mb-6">
                             <img
                                 src={`${import.meta.env.BASE_URL}logo.png`}
@@ -18,29 +18,32 @@ export default function Footer() {
                                 B3D <span className="font-bold">Design</span>
                             </div>
                         </div>
-                        <p className="text-gray-400 text-xs leading-relaxed uppercase tracking-wide">
+                        <p className="text-gray-400 text-[11px] leading-relaxed uppercase tracking-widest text-balance">
                             2D CAD drawings, high-quality 3D Renders and Virtual Reality walk-throughs for AEC, interior Design, manufacturing and landscaping Industries
                         </p>
                     </div>
 
                     {/* Navigation */}
-                    <div className="flex flex-col gap-4 text-center md:text-left w-full md:w-auto items-center md:items-start">
-                        <h4 className="font-bold uppercase tracking-widest text-xs text-gray-500 mb-2 md:hidden">Company</h4>
-                        <Link to="/about" className="text-sm font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">About Us</Link>
-                        <Link to="/#news" className="text-sm font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">News</Link>
-                        <Link to="/contact" className="text-sm font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Contact us</Link>
+                    <div className="flex flex-col gap-6 text-center md:text-left w-full md:w-auto items-center md:items-start mb-12 md:mb-0">
+                        <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] text-gray-500 mb-4 md:hidden">Company</h4>
+                        <Link to="/about" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">About Us</Link>
+                        <Link to="/services/exterior-visualization" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Exterior Visualization</Link>
+                        <Link to="/services/interior-design" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Interior Design</Link>
+                        <Link to="/services/planning-permission" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Planning Permission</Link>
+                        <Link to="/services/virtual-reality" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Virtual Reality</Link>
+                        <Link to="/contact" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Contact us</Link>
                     </div>
 
                     {/* Newsletter */}
                     <div className="w-full md:w-auto text-center md:text-left">
-                        <h3 className="font-bold text-lg mb-6">Subscribe to our newsletters</h3>
-                        <form className="flex flex-col sm:flex-row gap-2 sm:gap-0" onSubmit={(e) => e.preventDefault()}>
+                        <h3 className="font-bold text-lg mb-8">Subscribe to our newsletters</h3>
+                        <form className="flex flex-col sm:flex-row gap-4 sm:gap-0" onSubmit={(e) => e.preventDefault()}>
                             <input
                                 type="email"
                                 placeholder="Email address"
-                                className="bg-white text-gray-900 px-4 py-3 w-full sm:w-64 focus:outline-none rounded-sm sm:rounded-r-none sm:rounded-l-sm placeholder-gray-500"
+                                className="bg-white text-gray-900 px-5 py-4 w-full sm:w-64 focus:outline-none rounded-sm sm:rounded-r-none sm:rounded-l-sm placeholder-gray-500 text-sm"
                             />
-                            <button className="bg-blue-600 text-white px-6 py-3 font-bold uppercase text-xs tracking-widest hover:bg-blue-700 transition-colors rounded-sm sm:rounded-l-none sm:rounded-r-sm border border-blue-600 w-full sm:w-auto">
+                            <button className="bg-blue-600 text-white px-8 py-4 font-bold uppercase text-[10px] tracking-widest hover:bg-blue-700 transition-colors rounded-sm sm:rounded-l-none sm:rounded-r-sm border border-blue-600 w-full sm:w-auto">
                                 Subscribe
                             </button>
                         </form>

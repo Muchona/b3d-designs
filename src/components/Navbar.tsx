@@ -7,7 +7,12 @@ export default function Navbar() {
     const location = useLocation();
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
+        const handleScroll = () => {
+            // Hero scrollytelling uses 300% extra height (400vh total)
+            // Navbar should turn white only after scrollytelling is complete
+            const threshold = window.innerHeight * 3.5;
+            setScrolled(window.scrollY > threshold);
+        };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -34,7 +39,19 @@ export default function Navbar() {
         return () => { document.body.style.overflow = 'unset'; };
     }, [mobileMenuOpen]);
 
-    const closeMenu = () => setMobileMenuOpen(false);
+    const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+
+    const closeMenu = () => {
+        setMobileMenuOpen(false);
+        setServicesDropdownOpen(false);
+    };
+
+    const services = [
+        { name: 'Exterior Visualization', path: '/services/exterior-visualization' },
+        { name: 'Interior Design', path: '/services/interior-design' },
+        { name: 'Planning Permission', path: '/services/planning-permission' },
+        { name: 'Virtual Reality', path: '/services/virtual-reality' },
+    ];
 
     // Reference Style: Clean white background on scroll, transparent on hero
     // Font: Inter/Outfit for technical feel
@@ -61,7 +78,12 @@ export default function Navbar() {
                                 HOME
                             </Link>
                         </li>
-                        <li key="Services">
+                        <li
+                            key="Services"
+                            className="relative group"
+                            onMouseEnter={() => setServicesDropdownOpen(true)}
+                            onMouseLeave={() => setServicesDropdownOpen(false)}
+                        >
                             <Link
                                 to="/#services"
                                 onClick={(e) => {
@@ -73,14 +95,28 @@ export default function Navbar() {
                                         }
                                     }
                                 }}
-                                className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}>
+                                className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors flex items-center gap-1.5 ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}>
                                 Services
+                                <svg className={`w-3 h-3 transition-transform duration-300 ${servicesDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                </svg>
                             </Link>
-                        </li>
-                        <li key="Gallery">
-                            <Link to="/gallery" className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}>
-                                Gallery
-                            </Link>
+
+                            {/* Dropdown Menu */}
+                            <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 ${servicesDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
+                                <div className="bg-white rounded-lg shadow-2xl border border-gray-100 py-4 min-w-[240px] overflow-hidden">
+                                    {services.map((service) => (
+                                        <Link
+                                            key={service.path}
+                                            to={service.path}
+                                            className="block px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                                            onClick={() => setServicesDropdownOpen(false)}
+                                        >
+                                            {service.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         </li>
                         <li key="About">
                             <Link to="/about" className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}>
@@ -115,17 +151,34 @@ export default function Navbar() {
 
             {/* Mobile Menu Overlay */}
             <div className={`fixed inset-0 bg-white z-40 transition-transform duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="flex flex-col items-center justify-center h-full gap-8">
-                    <Link to="/" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">HOME</Link>
-                    <Link to="/#services" onClick={() => { closeMenu(); setTimeout(() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">SERVICES</Link>
-                    <Link to="/gallery" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">GALLERY</Link>
-                    <Link to="/about" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">ABOUT</Link>
-                    <Link to="/contact" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">CONTACT</Link>
+                <div className="flex flex-col items-center justify-center min-h-screen py-20 px-6 overflow-y-auto">
+                    <div className="flex flex-col items-center gap-8 w-full max-w-xs">
+                        <Link to="/" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">HOME</Link>
 
-                    <div className="mt-8">
-                        <Link to="/contact" onClick={closeMenu} className="px-8 py-4 bg-blue-600 text-white font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-colors shadow-lg">
-                            Get a Quote
-                        </Link>
+                        <div className="w-full">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Our Services</p>
+                            <div className="flex flex-col gap-4">
+                                {services.map((service) => (
+                                    <Link
+                                        key={service.path}
+                                        to={service.path}
+                                        onClick={closeMenu}
+                                        className="text-lg font-display font-medium text-gray-700 hover:text-blue-600 transition-colors text-center"
+                                    >
+                                        {service.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Link to="/about" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">ABOUT</Link>
+                        <Link to="/contact" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">CONTACT</Link>
+
+                        <div className="mt-8 w-full">
+                            <Link to="/contact" onClick={closeMenu} className="block w-full text-center px-8 py-4 bg-blue-600 text-white font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-colors shadow-lg">
+                                Get a Quote
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface EnquiryModalProps {
@@ -44,7 +45,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         inputRef.current?.click();
     };
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <>
@@ -169,6 +170,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

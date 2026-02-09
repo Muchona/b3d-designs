@@ -1,72 +1,29 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
-
-function ProceduralHouse() {
-    return (
-        <group position={[0, -1, 0]}>
-            {/* Main Structure - White Concrete */}
-            <mesh position={[0, 1.5, 0]}>
-                <boxGeometry args={[4, 3, 3]} />
-                <meshStandardMaterial color="#ffffff" roughness={0.1} />
-            </mesh>
-
-            {/* Second Floor - Offset */}
-            <mesh position={[1, 3.5, 0.5]}>
-                <boxGeometry args={[3, 2.5, 3.5]} />
-                <meshStandardMaterial color="#f0f0f0" roughness={0.2} />
-            </mesh>
-
-            {/* Wood Accent Panel */}
-            <mesh position={[-1.5, 1.5, 1.55]}>
-                <boxGeometry args={[1, 2.8, 0.1]} />
-                <meshStandardMaterial color="#8B4513" roughness={0.8} />
-            </mesh>
-
-            {/* Glass Window */}
-            <mesh position={[1, 3.5, 2.3]}>
-                <boxGeometry args={[2, 1.5, 0.1]} />
-                <meshPhysicalMaterial
-                    color="#88ccff"
-                    metalness={0.1}
-                    roughness={0}
-                    transmission={0.5}
-                    thickness={0.5}
-                />
-            </mesh>
-
-            {/* Base Platform */}
-            <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[10, 10]} />
-                <meshStandardMaterial color="#333" roughness={0.8} />
-            </mesh>
-        </group>
-    );
-}
-
 export default function InteractiveLab() {
     return (
-        <section id="lab" className="h-auto md:h-screen w-full bg-gray-50 relative flex flex-col md:flex-row">
-            {/* 3D Canvas Area */}
-            <div className="w-full md:w-2/3 h-[60vh] md:h-full relative touch-pan-y">
-                <Canvas shadows camera={{ position: [5, 5, 5], fov: 45 }}>
-                    <ambientLight intensity={0.5} />
-                    <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-                    <Environment preset="city" />
-
-                    <ProceduralHouse />
-
-                    <ContactShadows position={[0, -1.1, 0]} opacity={0.4} scale={10} blur={2.5} far={4} />
-                    <OrbitControls enableZoom={false} minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
-                </Canvas>
+        <section id="lab" className="h-auto md:h-screen w-full bg-gray-50 relative flex flex-col md:flex-row items-center justify-center p-6 md:p-12 lg:p-24">
+            {/* 3D Canvas Area - Refined and Scaled Down */}
+            <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative overflow-hidden bg-gray-900 group rounded-2xl shadow-2xl border border-gray-200">
+                <iframe
+                    title="WORK"
+                    className="w-full h-full border-0"
+                    allowFullScreen
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    xr-spatial-tracking="true"
+                    execution-while-out-of-viewport="true"
+                    execution-while-not-rendered="true"
+                    web-share="true"
+                    src="https://sketchfab.com/playlists/embed?collection=3d7dd21b84df4389a4b7ac6540610178&autostart=1"
+                ></iframe>
 
                 {/* Instructional Overlay */}
-                <div className="absolute bottom-6 left-6 bg-white/80 backdrop-blur-md p-4 rounded-lg pointer-events-none">
-                    <p className="text-xs font-mono uppercase tracking-widest text-gray-500">Left Click to Rotate</p>
+                <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-lg pointer-events-none shadow-xl border border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 mb-1">Interactive Showcase</p>
+                    <p className="text-xs font-medium text-gray-900">Drag to rotate • Scroll to zoom</p>
                 </div>
             </div>
 
             {/* Sidebar Info */}
-            <div className="w-full md:w-1/3 p-12 flex flex-col justify-center bg-white border-l border-gray-100">
+            <div className="w-full md:w-1/2 p-12 flex flex-col justify-center">
                 <span className="text-bureau-blue font-mono text-xs tracking-widest uppercase mb-4">Interactive Blueprint</span>
                 <h2 className="text-4xl font-display font-bold mb-6 text-gray-900">Virtual <br />Exploration.</h2>
                 <p className="text-gray-500 text-sm leading-relaxed mb-8 font-sans">
