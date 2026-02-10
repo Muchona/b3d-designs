@@ -2,7 +2,7 @@
   "name": "b3d-designs",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://Muchona.github.io/b3d-designs",
+  "homepage": "https://b3ddesigns.ie",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

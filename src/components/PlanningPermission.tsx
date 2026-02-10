@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const images = import.meta.glob('../assets/Fintan/*.jpeg', { eager: true, query: '?url', import: 'default' });
+const images = import.meta.glob('../assets/planning permission/*.jpeg', { eager: true, query: '?url', import: 'default' });
 const projectImages = Object.values(images) as string[];
 
 export default function PlanningPermission() {
@@ -45,7 +45,7 @@ export default function PlanningPermission() {
                     </div>
                     <div className="grid grid-cols-2 gap-8 bg-gray-50 p-12 rounded-2xl">
                         {[
-                            { label: "Compliance", value: "UK Council Standards" },
+                            { label: "Compliance", value: "Irish Council Standards" },
                             { label: "Technical Data", value: "DWG & PDF Output" },
                             { label: "Turnaround", value: "Rapid Iteration" },
                             { label: "Success Rate", value: "High Approval" }
@@ -65,7 +65,7 @@ export default function PlanningPermission() {
                         Technical Portfoio
                     </h3>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {projectImages.slice(16, 24).map((src, i) => (
+                        {projectImages.slice(0, 8).map((src, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, scale: 0.95 }}

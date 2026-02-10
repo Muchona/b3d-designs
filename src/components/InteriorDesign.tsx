@@ -1,13 +1,44 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-const images = import.meta.glob('../assets/Fintan/*.jpeg', { eager: true, query: '?url', import: 'default' });
+const images = import.meta.glob('../assets/interior design/*.jpeg', { eager: true, query: '?url', import: 'default' });
 const projectImages = Object.values(images) as string[];
 
 export default function InteriorDesign() {
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const openLightbox = (index: number) => {
+        setCurrentImageIndex(index);
+        setLightboxOpen(true);
+    };
+
+    const nextImage = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setCurrentImageIndex((prev) => (prev + 1) % projectImages.length);
+    };
+
+    const prevImage = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setCurrentImageIndex((prev) => (prev - 1 + projectImages.length) % projectImages.length);
+    };
+
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!lightboxOpen) return;
+            if (e.key === 'Escape') setLightboxOpen(false);
+            if (e.key === 'ArrowRight') setCurrentImageIndex((prev) => (prev + 1) % projectImages.length);
+            if (e.key === 'ArrowLeft') setCurrentImageIndex((prev) => (prev - 1 + projectImages.length) % projectImages.length);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [lightboxOpen]);
+
     return (
         <section className="bg-white min-h-screen">
-            {/* Service Hero */}
+            {/* ... keeping existing Hero ... */}
             <div className="relative h-[60vh] w-full overflow-hidden flex items-center bg-gray-900">
                 <img
                     src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop"
@@ -64,21 +95,30 @@ export default function InteriorDesign() {
                         <span className="h-[2px] w-8 bg-blue-600"></span>
                         Interior Portfolio
                     </h3>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {projectImages.slice(8, 16).map((src, i) => (
+                    <div className="grid grid-cols-4 gap-2 md:gap-4">
+                        {projectImages.map((src, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
-                                className="aspect-[4/5] overflow-hidden bg-gray-100 rounded-lg group"
+                                className="aspect-[4/5] overflow-hidden bg-gray-100 rounded-lg group cursor-pointer relative"
+                                onClick={() => openLightbox(i)}
                             >
                                 <img
                                     src={src}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt={`Interior Project ${i}`}
+                                    loading="lazy"
                                 />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                        <svg className="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
@@ -93,6 +133,57 @@ export default function InteriorDesign() {
                     </Link>
                 </div>
             </div>
+
+            {/* Lightbox Modal */}
+            {lightboxOpen && (
+                <div
+                    className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+                    onClick={() => setLightboxOpen(false)}
+                >
+                    <button
+                        className="absolute top-4 right-4 text-white/50 hover:text-white p-2 transition-colors z-50"
+                        onClick={() => setLightboxOpen(false)}
+                    >
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <button
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4 transition-colors z-50 hidden md:block"
+                        onClick={prevImage}
+                    >
+                        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <button
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4 transition-colors z-50 hidden md:block"
+                        onClick={nextImage}
+                    >
+                        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="relative max-w-full max-h-full"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <img
+                            src={projectImages[currentImageIndex]}
+                            alt={`Project Fullscreen ${currentImageIndex}`}
+                            className="max-h-[90vh] max-w-[90vw] object-contain rounded-sm shadow-2xl"
+                        />
+                        <div className="absolute bottom-[-30px] left-0 w-full text-center text-white/50 text-xs tracking-widest uppercase">
+                            {currentImageIndex + 1} / {projectImages.length}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </section>
     );
 }

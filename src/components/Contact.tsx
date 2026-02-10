@@ -66,7 +66,7 @@ export default function Contact() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2, duration: 0.6 }}
                     >
-                        <form className="space-y-6">
+                        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                             {/* Name */}
                             <div className="group">
                                 <input
