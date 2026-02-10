@@ -34,12 +34,19 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <HashRouter>
-        <App />
-      </HashRouter>
-    </ErrorBoundary>
-  </StrictMode>,
-)
+try {
+  // Temporary debug alert to confirm JS execution
+  // alert('App Starting...'); 
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <ErrorBoundary>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </ErrorBoundary>
+    </StrictMode>,
+  )
+} catch (e) {
+  console.error("Critical Render Error:", e);
+  document.body.innerHTML = '<h1 style="color:red">Critical Error: ' + String(e) + '</h1>';
+}
