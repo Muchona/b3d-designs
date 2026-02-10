@@ -68,7 +68,7 @@ export default function VirtualReality() {
                             title="WORK"
                             className="w-full h-full border-0"
                             allowFullScreen
-                            allow="autoplay; fullscreen; xr-spatial-tracking"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; xr-spatial-tracking"
                             xr-spatial-tracking="true"
                             execution-while-out-of-viewport="true"
                             execution-while-not-rendered="true"
