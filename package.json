@@ -2,7 +2,7 @@
   "name": "b3d-designs",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://Muchona.github.io/b3d-designs",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
