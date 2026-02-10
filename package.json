@@ -2,11 +2,11 @@
   "name": "b3d-designs",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://b3ddesigns.ie",
+  "homepage": "https://Muchona.github.io/b3d-designs",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node -e \"require('fs').copyFileSync('dist/index.html', 'dist/404.html'); require('fs').writeFileSync('dist/.nojekyll', '')\"",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",

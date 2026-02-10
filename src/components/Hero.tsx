@@ -13,7 +13,7 @@ const images = import.meta.glob('../assets/scrollytelling/*.jpg', { eager: true,
 // Sort images by filename to ensure correct sequence
 const scrollyImages = Object.entries(images)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([, url]) => url as string);
+    .map(([_, url]) => url as string);
 
 export default function Hero() {
     const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
@@ -44,8 +44,6 @@ export default function Hero() {
                 if (loadedCount === totalImages) {
                     imageObjects.current = loadedImages;
                     setImagesLoaded(true);
-                    // Draw first frame immediately
-                    renderFrame(0);
                 }
             };
             // Maintain order
@@ -57,173 +55,165 @@ export default function Hero() {
         };
     }, []);
 
-
-    // 2. Rendering Function
-    const renderFrame = (index: number) => {
-        const canvas = canvasRef.current;
-        const ctx = canvas?.getContext('2d');
-        const img = imageObjects.current[index];
-
-        if (canvas && ctx && img) {
-            // Draw image to fill canvas (cover style)
-            const hRatio = canvas.width / img.width;
-            const vRatio = canvas.height / img.height;
-            const ratio = Math.max(hRatio, vRatio);
-            const centerShift_x = (canvas.width - img.width * ratio) / 2;
-            const centerShift_y = (canvas.height - img.height * ratio) / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, img.width, img.height,
-                centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
-        }
-    };
-
-    // 3. Animation Logic
+    // 2. Setup Canvas & Animation
     useLayoutEffect(() => {
-        if (!imagesLoaded) return;
+        if (!imagesLoaded || !canvasRef.current || imageObjects.current.length === 0) return;
 
-        const ctx = gsap.context(() => {
-            const totalFrames = scrollyImages.length - 1;
-            const airpods = { frame: 0 };
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-            gsap.to(airpods, {
-                frame: totalFrames,
-                snap: "frame",
+        // Initial render helper
+        const renderFrame = (index: number) => {
+            const img = imageObjects.current[index];
+            if (!img) return;
+
+            // Cover logic (contain/cover emulation for canvas)
+            const w = canvas.width;
+            const h = canvas.height;
+            const imgW = img.naturalWidth;
+            const imgH = img.naturalHeight;
+            const aspect = w / h;
+            const imgAspect = imgW / imgH;
+
+            let drawW, drawH, drawX, drawY;
+
+            if (imgAspect > aspect) {
+                // Image is wider than canvas
+                drawH = h;
+                drawW = h * imgAspect;
+                drawX = (w - drawW) / 2;
+                drawY = 0;
+            } else {
+                // Image is taller than canvas
+                drawW = w;
+                drawH = w / imgAspect;
+                drawX = 0;
+                drawY = (h - drawH) / 2;
+            }
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        };
+
+        // Resize handler
+        const handleResize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Re-render current frame if needed (simplification: render first frame or current generic)
+            // Ideally we tracked the current frame index, but GSAP controls that.
+            // GSAP will re-render on scroll update anyway.
+        };
+
+        // Set initial size
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        // GSAP Context
+        const gsapCtx = gsap.context(() => {
+            const frames = { current: 0 };
+
+            // Initial draw
+            renderFrame(0);
+
+            // Timeline
+            gsap.to(frames, {
+                current: imageObjects.current.length - 1,
+                snap: "current", // Snap to integer frames
                 ease: "none",
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: "bottom bottom",
-                    scrub: 0.5,
+                    end: "+=500%", // Longer scroll for smoother playback
+                    scrub: 0.1, // Very responsive scrub
+                    pin: true,
+                    // onUpdate: (self) => renderFrame(Math.round(frames.current)) // Managed by tween update
                 },
-                onUpdate: () => renderFrame(airpods.frame)
+                onUpdate: () => {
+                    renderFrame(Math.round(frames.current));
+                }
             });
-        }, containerRef);
+        });
 
-        return () => ctx.revert();
-    }, [imagesLoaded]);
-
-    // Handle Resize
-    useEffect(() => {
-        const handleResize = () => {
-            const canvas = canvasRef.current;
-            if (canvas) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                if (imagesLoaded) renderFrame(0);
-            }
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            gsapCtx.revert();
         };
-
-        window.addEventListener('resize', handleResize);
-        handleResize(); // Initial call
-
-        return () => window.removeEventListener('resize', handleResize);
     }, [imagesLoaded]);
 
     return (
-        <>
-            <section ref={containerRef} className="relative h-[800vh] bg-black">
-                {/* Fixed Canvas Container */}
-                <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
-                    <canvas
-                        ref={canvasRef}
-                        className="w-full h-full object-cover transition-opacity duration-1000"
-                        style={{ opacity: imagesLoaded ? 1 : 0 }}
-                    />
+        <section ref={containerRef} className="relative bg-black w-full overflow-hidden h-screen">
+            {/* 1. Canvas Layer (The "Video") */}
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full object-cover z-0 block"
+            />
 
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-black/40" />
-
-                    {/* Non-scrolling Overlay Content (if needed) */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            className="z-10"
-                        >
-                            <h1 className="text-4xl md:text-7xl lg:text-8xl font-display font-medium text-white mb-6 uppercase tracking-[0.2em] leading-tight">
-                                Design <br /> Beyond <br /> Limits
-                            </h1>
-                        </motion.div>
+            {/* 2. Loading State */}
+            {!imagesLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-white/40 font-mono text-[10px] uppercase tracking-widest">Loading Experience...</span>
                     </div>
-
-                    {/* Scroll Indicator */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1, duration: 1 }}
-                        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-                    >
-                        <span className="text-[10px] uppercase tracking-[0.3em] text-white/40 font-mono">Scroll to explore</span>
-                        <div className="w-[1px] h-12 bg-gradient-to-b from-bureau-blue to-transparent" />
-                    </motion.div>
                 </div>
+            )}
 
-                {/* Floating Content Blocks that scroll over the canvas */}
-                <div className="relative z-20 container mx-auto px-6 pointer-events-none">
-                    {/* First Block - Dublin Based */}
-                    <div className="h-screen flex items-center justify-start py-20 pointer-events-none">
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ margin: "-20%" }}
-                            className="max-w-xl bg-black/40 backdrop-blur-md p-8 md:p-12 border border-white/10 rounded-2xl pointer-events-auto"
-                        >
-                            <span className="text-bureau-blue font-mono text-xs tracking-widest uppercase mb-4 block">Dublin Based</span>
-                            <h2 className="text-3xl md:text-5xl font-display font-medium text-white mb-6 leading-tight">
-                                High Performance <br /> Design Engineering
-                            </h2>
-                            <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                                Specializing in 3D architecture, interior design, and immersive VR experiences.
-                            </p>
-                            <Link to="/about" className="inline-flex items-center text-white text-sm uppercase tracking-widest gap-4 group">
-                                <span className="w-8 h-[1px] bg-white group-hover:w-12 transition-all" />
-                                Our Story
-                            </Link>
-                        </motion.div>
+            {/* 3. Gradient Overlay (Cinematic look) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent z-10 pointer-events-none" />
+
+            {/* 4. Content */}
+            <div className="relative z-20 h-full flex flex-col justify-center px-8 md:px-24 max-w-7xl mx-auto pointer-events-none">
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="max-w-3xl pointer-events-auto"
+                >
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="h-[2px] w-12 bg-blue-600"></div>
+                        <span className="text-gray-300 font-sans tracking-[0.2em] text-sm uppercase font-bold">
+                            Architecture & Development
+                        </span>
                     </div>
 
-                    {/* Second Block - Center Image View */}
-                    <div className="h-[200vh]" /> {/* Gap */}
+                    <h1 className="text-4xl md:text-7xl font-display font-medium text-white leading-[1.1] mb-8">
+                        Bringing Your <br />
+                        <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Vision to Life.</span>
+                    </h1>
 
-                    {/* Third Block - Interactive 3D */}
-                    <div className="h-screen flex items-center justify-end py-20 pointer-events-none">
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ margin: "-20%" }}
-                            className="max-w-xl bg-black/40 backdrop-blur-md p-8 md:p-12 border border-white/10 rounded-2xl pointer-events-auto"
+                    <p className="text-lg md:text-xl text-gray-300 font-light mb-10 max-w-xl leading-relaxed">
+                        Precision, passion, and performance. We transform concepts into ultra-realistic digital realities that drive value and inspire trust.
+                    </p>
+
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <Link to="/#services" className="px-8 py-4 bg-blue-600 text-center text-white font-bold tracking-widest uppercase text-xs hover:bg-blue-700 transition-all hover:scale-105 shadow-xl shadow-blue-900/20">
+                            Our Services
+                        </Link>
+                        <button
+                            onClick={() => setIsEnquiryOpen(true)}
+                            className="px-8 py-4 border border-white/20 text-white font-bold tracking-widest uppercase text-xs hover:bg-white hover:text-black transition-all hover:scale-105 backdrop-blur-sm"
                         >
-                            <span className="text-bureau-blue font-mono text-xs tracking-widest uppercase mb-4 block">Architecture</span>
-                            <h2 className="text-3xl md:text-5xl font-display font-medium text-white mb-6 leading-tight">
-                                Immersive <br /> Living Spaces
-                            </h2>
-                            <p className="text-gray-300 text-lg leading-relaxed mb-10">
-                                We transform architectural concepts into high-fidelity visual narratives.
-                            </p>
-                            <div className="flex flex-wrap gap-4">
-                                <button
-                                    onClick={() => setIsEnquiryOpen(true)}
-                                    className="bg-bureau-blue text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all"
-                                >
-                                    Get a Quote
-                                </button>
-                                <Link
-                                    to="/exterior"
-                                    className="border border-white/20 text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-white/10 transition-all"
-                                >
-                                    View Projects
-                                </Link>
-                            </div>
-                        </motion.div>
+                            Make an Enquiry
+                        </button>
                     </div>
+                </motion.div>
+            </div>
 
-                    <div className="h-[200vh]" /> {/* Gap to finish scroll */}
-                </div>
-            </section>
+            {/* 5. Scroll Indicator */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer pointer-events-auto"
+                onClick={() => window.scrollTo({ top: window.innerHeight * 1.5, behavior: 'smooth' })}
+            >
+                <span className="text-white/60 text-[10px] font-bold tracking-[0.2em] uppercase">Scroll</span>
+                <div className="w-[1px] h-12 bg-gradient-to-b from-blue-600 to-transparent"></div>
+            </motion.div>
 
+            {/* Modal */}
             <EnquiryModal isOpen={isEnquiryOpen} onClose={() => setIsEnquiryOpen(false)} />
-        </>
+        </section>
     );
 }
