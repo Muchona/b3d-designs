@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 
 const cultureValues = [
     {
@@ -24,6 +24,74 @@ const cultureValues = [
         image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop"
     }
 ];
+
+interface CultureItemProps {
+    item: typeof cultureValues[0];
+    index: number;
+    scrollYProgress: MotionValue<number>;
+}
+
+function CultureBackgroundItem({ item, index, scrollYProgress }: CultureItemProps) {
+    const rangeStart = index * 0.25;
+    const rangeEnd = rangeStart + 0.25;
+    const opacity = useTransform(scrollYProgress,
+        [rangeStart, rangeStart + 0.05, rangeEnd - 0.05, rangeEnd],
+        [0, 1, 1, 0]
+    );
+
+    return (
+        <motion.div
+            key={`bg-${index}`}
+            style={{ opacity }}
+            className="absolute inset-0"
+        >
+            <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover"
+                style={{ opacity: 0.5 }}
+            />
+            <div className="absolute inset-0 bg-black/60" />
+        </motion.div>
+    );
+}
+
+function CultureCard({ item, index, scrollYProgress }: CultureItemProps) {
+    const rangeStart = index * 0.25;
+    const rangeEnd = rangeStart + 0.25;
+
+    const opacity = useTransform(scrollYProgress,
+        [rangeStart, rangeStart + 0.05, rangeEnd - 0.05, rangeEnd],
+        [0, 1, 1, 0]
+    );
+    const y = useTransform(scrollYProgress,
+        [rangeStart, rangeStart + 0.1, rangeEnd],
+        [50, 0, -50]
+    );
+
+    return (
+        <motion.div
+            style={{ opacity, y }}
+            className="absolute inset-0 flex items-center justify-center p-6 md:p-20 pointer-events-none"
+        >
+            <div className="max-w-xl pointer-events-auto">
+                <span className="block font-mono text-6xl md:text-8xl text-white/10 font-bold mb-[-2rem] md:mb-[-3rem] select-none">
+                    0{index + 1}
+                </span>
+
+                <div className="relative ml-4 md:ml-8">
+                    <h3 className="text-5xl md:text-7xl font-display font-bold mb-8 text-white tracking-tight leading-none drop-shadow-md">
+                        {item.title}
+                    </h3>
+                    <div className="h-1 w-24 bg-bureau-blue mb-8"></div>
+                    <p className="text-gray-100 text-lg md:text-2xl leading-relaxed font-light drop-shadow-sm">
+                        {item.text}
+                    </p>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
 
 export default function About() {
     const containerRef = useRef(null);
@@ -132,32 +200,14 @@ export default function About() {
 
                     {/* Background Image Layer */}
                     <div className="absolute inset-0 z-0">
-                        {cultureValues.map((item, index) => {
-                            const rangeStart = index * 0.25;
-                            const rangeEnd = rangeStart + 0.25;
-                            const opacity = useTransform(scrollYProgress,
-                                [rangeStart, rangeStart + 0.05, rangeEnd - 0.05, rangeEnd],
-                                [0, 1, 1, 0]
-                            );
-
-                            return (
-                                <motion.div
-                                    key={`bg-${index}`}
-                                    style={{ opacity }}
-                                    className="absolute inset-0"
-                                >
-                                    {/* Image with very low opacity to barely show texture */}
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-full h-full object-cover"
-                                        style={{ opacity: 0.5 }}
-                                    />
-                                    {/* Heavy Overlay to darken it further */}
-                                    <div className="absolute inset-0 bg-black/60" />
-                                </motion.div>
-                            )
-                        })}
+                        {cultureValues.map((item, index) => (
+                            <CultureBackgroundItem
+                                key={`bg-${index}`}
+                                item={item}
+                                index={index}
+                                scrollYProgress={scrollYProgress}
+                            />
+                        ))}
                     </div>
 
                     {/* Content Layer */}
@@ -178,45 +228,14 @@ export default function About() {
 
                         {/* Right Panel - Scrolling Cards */}
                         <div className="w-full md:w-2/3 relative flex-1 flex items-center justify-center p-6 md:p-20 overflow-hidden z-10">
-                            {cultureValues.map((item, index) => {
-                                // Calculate opacity/y-position based on scroll progress
-                                const rangeStart = index * 0.25;
-                                const rangeEnd = rangeStart + 0.25;
-
-                                const opacity = useTransform(scrollYProgress,
-                                    [rangeStart, rangeStart + 0.05, rangeEnd - 0.05, rangeEnd],
-                                    [0, 1, 1, 0]
-                                );
-                                const y = useTransform(scrollYProgress,
-                                    [rangeStart, rangeStart + 0.1, rangeEnd],
-                                    [50, 0, -50]
-                                );
-
-                                return (
-                                    <motion.div
-                                        key={index}
-                                        style={{ opacity, y }}
-                                        className="absolute inset-0 flex items-center justify-center p-6 md:p-20 pointer-events-none"
-                                    >
-                                        <div className="max-w-xl pointer-events-auto">
-                                            {/* Numeric Indicator */}
-                                            <span className="block font-mono text-6xl md:text-8xl text-white/10 font-bold mb-[-2rem] md:mb-[-3rem] select-none">
-                                                0{index + 1}
-                                            </span>
-
-                                            <div className="relative ml-4 md:ml-8">
-                                                <h3 className="text-5xl md:text-7xl font-display font-bold mb-8 text-white tracking-tight leading-none drop-shadow-md">
-                                                    {item.title}
-                                                </h3>
-                                                <div className="h-1 w-24 bg-bureau-blue mb-8"></div>
-                                                <p className="text-gray-100 text-lg md:text-2xl leading-relaxed font-light drop-shadow-sm">
-                                                    {item.text}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
+                            {cultureValues.map((item, index) => (
+                                <CultureCard
+                                    key={index}
+                                    item={item}
+                                    index={index}
+                                    scrollYProgress={scrollYProgress}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
