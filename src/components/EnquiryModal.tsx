@@ -46,11 +46,12 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     };
 
     return createPortal(
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isOpen && (
-                <>
+                <div key="modal-portal-root">
                     {/* Backdrop */}
                     <motion.div
+                        key="modal-backdrop"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -60,6 +61,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
                     {/* Modal */}
                     <motion.div
+                        key="modal-content"
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -168,7 +170,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
                         </div>
                     </motion.div>
-                </>
+                </div>
             )}
         </AnimatePresence>,
         document.body

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
@@ -13,113 +13,156 @@ const images = import.meta.glob('../assets/scrollytelling/*.jpg', { eager: true,
 // Sort images by filename to ensure correct sequence
 const scrollyImages = Object.entries(images)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([_, url]) => url as string);
+    .map(([, url]) => url as string);
 
 export default function Hero() {
     const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
-    const heroRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [imagesLoaded, setImagesLoaded] = useState(false);
+    const imageObjects = useRef<HTMLImageElement[]>([]);
 
+    // 1. Preload Images into Memory
     useEffect(() => {
-        // Preload images to ensure smooth animation
+        let isMounted = true;
         let loadedCount = 0;
         const totalImages = scrollyImages.length;
 
-        if (totalImages === 0) return;
+        if (totalImages === 0) {
+            setImagesLoaded(true);
+            return;
+        }
 
-        scrollyImages.forEach((src) => {
+        const loadedImages: HTMLImageElement[] = [];
+
+        scrollyImages.forEach((src, index) => {
             const img = new Image();
             img.src = src;
             img.onload = () => {
+                if (!isMounted) return;
                 loadedCount++;
                 if (loadedCount === totalImages) {
+                    imageObjects.current = loadedImages;
                     setImagesLoaded(true);
                 }
             };
+            // Maintain order
+            loadedImages[index] = img;
         });
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    useEffect(() => {
-        if (!heroRef.current || !imagesLoaded || scrollyImages.length === 0) return;
+    // 2. Setup Canvas & Animation
+    useLayoutEffect(() => {
+        if (!imagesLoaded || !canvasRef.current || imageObjects.current.length === 0) return;
 
-        const ctx = gsap.context(() => {
-            const tl = gsap.timeline({
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Initial render helper
+        const renderFrame = (index: number) => {
+            const img = imageObjects.current[index];
+            if (!img) return;
+
+            // Cover logic (contain/cover emulation for canvas)
+            const w = canvas.width;
+            const h = canvas.height;
+            const imgW = img.naturalWidth;
+            const imgH = img.naturalHeight;
+            const aspect = w / h;
+            const imgAspect = imgW / imgH;
+
+            let drawW, drawH, drawX, drawY;
+
+            if (imgAspect > aspect) {
+                // Image is wider than canvas
+                drawH = h;
+                drawW = h * imgAspect;
+                drawX = (w - drawW) / 2;
+                drawY = 0;
+            } else {
+                // Image is taller than canvas
+                drawW = w;
+                drawH = w / imgAspect;
+                drawX = 0;
+                drawY = (h - drawH) / 2;
+            }
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        };
+
+        // Resize handler
+        const handleResize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Re-render current frame if needed (simplification: render first frame or current generic)
+            // Ideally we tracked the current frame index, but GSAP controls that.
+            // GSAP will re-render on scroll update anyway.
+        };
+
+        // Set initial size
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        // GSAP Context
+        const gsapCtx = gsap.context(() => {
+            const frames = { current: 0 };
+
+            // Initial draw
+            renderFrame(0);
+
+            // Timeline
+            gsap.to(frames, {
+                current: imageObjects.current.length - 1,
+                snap: "current", // Snap to integer frames
+                ease: "none",
                 scrollTrigger: {
-                    trigger: heroRef.current,
+                    trigger: containerRef.current,
                     start: "top top",
-                    end: "+=300%", // Extra scroll depth for a cinematic feel
-                    scrub: 0.5, // Smoother scrubbing
+                    end: "+=500%", // Longer scroll for smoother playback
+                    scrub: 0.1, // Very responsive scrub
                     pin: true,
-                    anticipatePin: 1
+                    // onUpdate: (self) => renderFrame(Math.round(frames.current)) // Managed by tween update
+                },
+                onUpdate: () => {
+                    renderFrame(Math.round(frames.current));
                 }
             });
+        });
 
-            const imgs = gsap.utils.toArray(".scrolly-frame");
-
-            // Animation logic: Layered Fade
-            imgs.forEach((img, i) => {
-                if (i === 0) {
-                    gsap.set(img as any, { opacity: 1 });
-                } else {
-                    // Current image fades IN over the previous one
-                    // Previous image stays solid until current one is mostly opaque
-                    tl.to(img as any, {
-                        opacity: 1,
-                        duration: 0.8,
-                        ease: "power1.inOut"
-                    }, i - 0.2); // Overlap slightly with previous step
-                }
-
-                // Continuous zoom effect
-                tl.to(img as any, {
-                    scale: 1.08,
-                    duration: 1.2,
-                    ease: "none"
-                }, i);
-            });
-
-            // Final state: dim the last frame slightly to keep text readable as user continues scrolling
-            tl.to(".scrolly-container", {
-                filter: "brightness(0.6)",
-                duration: 0.5
-            });
-
-        }, heroRef);
-
-        return () => ctx.revert();
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            gsapCtx.revert();
+        };
     }, [imagesLoaded]);
 
     return (
-        <section ref={heroRef} className="relative h-screen w-full overflow-hidden bg-black">
-            {/* Scrollytelling Background Layer */}
-            <div className="absolute inset-0 z-0 scrolly-container">
-                {!imagesLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-white/40 font-mono text-[10px] uppercase tracking-widest">Loading Cinema...</span>
-                        </div>
+        <section ref={containerRef} className="relative bg-black w-full overflow-hidden h-screen">
+            {/* 1. Canvas Layer (The "Video") */}
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full object-cover z-0 block"
+            />
+
+            {/* 2. Loading State */}
+            {!imagesLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-white/40 font-mono text-[10px] uppercase tracking-widest">Loading Experience...</span>
                     </div>
-                )}
-                {scrollyImages.map((src, i) => (
-                    <img
-                        key={i}
-                        src={src}
-                        alt={`Architectural Frame ${i}`}
-                        className="scrolly-frame absolute inset-0 w-full h-full object-cover opacity-0 transition-transform duration-1000"
-                        style={{
-                            zIndex: i,
-                            // Performance/Quality hints
-                            imageRendering: 'auto'
-                        }}
-                    />
-                ))}
-            </div>
+                </div>
+            )}
 
-            {/* Cinematic Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent z-10" />
+            {/* 3. Gradient Overlay (Cinematic look) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent z-10 pointer-events-none" />
 
-            {/* Content Left-Aligned */}
+            {/* 4. Content */}
             <div className="relative z-20 h-full flex flex-col justify-center px-8 md:px-24 max-w-7xl mx-auto pointer-events-none">
                 <motion.div
                     initial={{ opacity: 0, x: -50 }}
@@ -157,13 +200,13 @@ export default function Hero() {
                 </motion.div>
             </div>
 
-            {/* Scroll Indicator */}
+            {/* 5. Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: "reverse" }}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer"
-                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer pointer-events-auto"
+                onClick={() => window.scrollTo({ top: window.innerHeight * 1.5, behavior: 'smooth' })}
             >
                 <span className="text-white/60 text-[10px] font-bold tracking-[0.2em] uppercase">Scroll</span>
                 <div className="w-[1px] h-12 bg-gradient-to-b from-blue-600 to-transparent"></div>

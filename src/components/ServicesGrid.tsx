@@ -49,7 +49,7 @@ export default function ServicesGrid() {
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {services.map((service, index) => (
-                        <Link key={index} to={service.link} className="block w-full">
+                        <Link key={service.title} to={service.link} className="block w-full">
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}

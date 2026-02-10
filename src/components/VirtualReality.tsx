@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const images = import.meta.glob('../assets/Fintan/*.jpeg', { eager: true, query: '?url', import: 'default' });
-const projectImages = Object.values(images) as string[];
+// Images removed as we are now focusing purely on the 3D Showroom
 
 export default function VirtualReality() {
     return (
@@ -64,7 +63,7 @@ export default function VirtualReality() {
                         <span className="h-[2px] w-8 bg-blue-600"></span>
                         Interactive 3D Showroom
                     </h3>
-                    <div className="w-full h-[50vh] md:h-[70vh] relative overflow-hidden bg-gray-900 group rounded-2xl shadow-2xl border border-gray-200 mb-8">
+                    <div className="w-full aspect-square md:aspect-video h-[80vh] relative overflow-hidden bg-gray-900 group rounded-2xl shadow-2xl border border-gray-200 mb-8">
                         <iframe
                             title="WORK"
                             className="w-full h-full border-0"
@@ -80,32 +79,6 @@ export default function VirtualReality() {
                             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 mb-1">Interactive Showcase</p>
                             <p className="text-xs font-medium text-gray-900">Drag to rotate • Scroll to zoom</p>
                         </div>
-                    </div>
-                </div>
-
-                {/* Immersive Showcase */}
-                <div className="mb-24">
-                    <h3 className="text-2xl font-display font-bold text-gray-900 mb-12 flex items-center gap-4">
-                        <span className="h-[2px] w-8 bg-blue-600"></span>
-                        VR Projects & Concepts
-                    </h3>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {projectImages.slice(24, 32).map((src, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.05 }}
-                                className="aspect-[4/5] overflow-hidden bg-gray-100 rounded-lg group"
-                            >
-                                <img
-                                    src={src}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt={`VR Project ${i}`}
-                                />
-                            </motion.div>
-                        ))}
                     </div>
                 </div>
 
