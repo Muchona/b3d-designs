@@ -94,7 +94,7 @@ function CultureCard({ item, index, scrollYProgress }: CultureItemProps) {
 }
 
 export default function About() {
-    const containerRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
