@@ -28,12 +28,18 @@ export default function Hero() {
         let loadedCount = 0;
         const totalImages = scrollyImages.length;
 
+        if (totalImages === 0) {
+            setImagesLoaded(true);
+            return;
+        }
+
+        const loadedImages: HTMLImageElement[] = [];
+
         scrollyImages.forEach((src, index) => {
             const img = new Image();
             img.src = src;
             img.onload = () => {
                 if (!isMounted) return;
-                imageObjects.current[index] = img;
                 loadedCount++;
                 if (loadedCount === totalImages) {
                     imageObjects.current = loadedImages;
@@ -51,6 +57,7 @@ export default function Hero() {
         };
     }, []);
 
+
     // 2. Rendering Function
     const renderFrame = (index: number) => {
         const canvas = canvasRef.current;
@@ -64,7 +71,7 @@ export default function Hero() {
             const ratio = Math.max(hRatio, vRatio);
             const centerShift_x = (canvas.width - img.width * ratio) / 2;
             const centerShift_y = (canvas.height - img.height * ratio) / 2;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, img.width, img.height,
                 centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
@@ -123,7 +130,7 @@ export default function Hero() {
                         className="w-full h-full object-cover transition-opacity duration-1000"
                         style={{ opacity: imagesLoaded ? 1 : 0 }}
                     />
-                    
+
                     {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-black/40" />
 
