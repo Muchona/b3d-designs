@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/b3d-designs/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>b3d-designs</title>
-    <script type="module" crossorigin src="/b3d-designs/assets/index-C8qYY5rt.js"></script>
-    <link rel="stylesheet" crossorigin href="/b3d-designs/assets/index-C_VOcTbu.css">
-  </head>
-  <body>
+  <script type="module" crossorigin src="./assets/index-iRgNY8qI.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-C_VOcTbu.css">
+</head>
+
+<body>
     <div id="root"></div>
     <script>
-      window.onerror = function(message, source, lineno, colno, error) {
-        document.body.innerHTML += '<div style="color:red; padding:20px; font-family:monospace; background:white; z-index:9999; position:relative;">' +
-          '<h1>Global Error</h1>' +
-          '<p>' + message + '</p>' +
-          '<p>' + source + ':' + lineno + '</p>' +
-          '</div>';
-      };
-      window.addEventListener('unhandledrejection', function(event) {
-        document.body.innerHTML += '<div style="color:red; padding:20px; font-family:monospace; background:white; z-index:9999; position:relative;">' +
-          '<h1>Unhandled Promise Warning</h1>' +
-          '<p>' + event.reason + '</p>' +
-          '</div>';
-      });
-    </script>
-  </body>
+        window.onerror = function (message, source, lineno, colno, error) {
+            document.body.innerHTML += '<div style="color:red; padding:20px; font-family:monospace; background:white; z-index:9999; position:relative;">' +
+                '<h1>Global Error</h1>' +
+                '<p>' + message + '</p>' +
+                '<p>' + source + ':' + lineno + '</p>' +
+                '</div>';
+        };
+        window.addEventListener('unhandledrejection', function (event) {
+            document.body.innerHTML += '<div style="color:red; padding:20px; font-family:monospace; background:white; z-index:9999; position:relative;">' +
+                '<h1>Unhandled Promise Warning</h1>' +
+                '<p>' + event.reason + '</p>' +
+                '</div>';
+        });
+    </script>
+</body>
+
 </html>
