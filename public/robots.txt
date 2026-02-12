@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://b3ddesigns.ie/sitemap.xml
