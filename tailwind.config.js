@@ -11,6 +11,7 @@ export default {
                 'tech-blue': '#3B82F6',
                 'deep-space': '#0B0F19',
                 'off-white': '#F8FAFC',
+                'gold-accent': '#D4AF37',
             },
             fontFamily: {
                 'sans': ['Inter', 'sans-serif'],
