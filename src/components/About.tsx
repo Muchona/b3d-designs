@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import useSEO from '../hooks/useSEO';
+import StructuredData from './StructuredData';
+import { getBreadcrumbSchema } from '../utils/structuredData';
 
 const cultureValues = [
     {
@@ -26,6 +29,12 @@ const cultureValues = [
 ];
 
 export default function About() {
+    useSEO({
+        title: 'About B3D Designs | Architectural Visualization Studio — Dublin',
+        description: 'Dublin-based collaborative 3D visualization studio with an international team. We bring communication, collaboration, responsibility, and respect to every architectural project across Ireland, UK, and worldwide.',
+        keywords: 'about B3D Designs, architectural visualization studio Dublin, 3D design team Ireland, collaborative design studio, international visualization team',
+    });
+
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -34,6 +43,12 @@ export default function About() {
 
     return (
         <section className="bg-white min-h-screen">
+            <StructuredData data={[
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://b3ddesigns.ie/' },
+                    { name: 'About', url: 'https://b3ddesigns.ie/about' },
+                ]),
+            ]} />
             {/* Header / Hero */}
             <div className="pt-32 pb-20 container mx-auto px-6 md:px-12">
                 <span className="text-bureau-blue font-mono text-xs tracking-widest uppercase mb-4 block">Who We Are</span>

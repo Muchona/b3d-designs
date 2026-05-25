@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import QuoteModal from './QuoteModal';
 
 export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
+    const [quoteModalOpen, setQuoteModalOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -47,9 +49,11 @@ export default function Navbar() {
     };
 
     const services = [
+        { name: '2D Drafting', path: '/services/2d-drafting' },
+        { name: '3D Modeling', path: '/services/3d-modeling' },
         { name: 'Exterior Visualization', path: '/services/exterior-visualization' },
-        { name: 'Interior Design', path: '/services/interior-design' },
         { name: 'Planning Permission', path: '/services/planning-permission' },
+        { name: 'Augmented Reality', path: '/services/augmented-reality' },
         { name: 'Virtual Reality', path: '/services/virtual-reality' },
     ];
 
@@ -57,7 +61,7 @@ export default function Navbar() {
     // Font: Inter/Outfit for technical feel
     return (
         <>
-            <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || location.pathname !== '/' ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
+            <nav aria-label="Main Navigation" className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || location.pathname !== '/' ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
                 <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
                     {/* Logo */}
                     <Link to="/" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); closeMenu(); }} className="flex items-center gap-3 group cursor-pointer relative z-50">
@@ -118,6 +122,24 @@ export default function Navbar() {
                                 </div>
                             </div>
                         </li>
+                        <li key="Packages">
+                            <Link 
+                                to="/#packages" 
+                                onClick={(e) => {
+                                    if (location.pathname === '/') {
+                                        e.preventDefault();
+                                        const element = document.getElementById('packages');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }
+                                    closeMenu();
+                                }}
+                                className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}
+                            >
+                                PACKAGES
+                            </Link>
+                        </li>
                         <li key="About">
                             <Link to="/about" className={`text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${scrolled || location.pathname !== '/' ? 'text-gray-700' : 'text-white/90 hover:text-white'}`}>
                                 About
@@ -132,9 +154,9 @@ export default function Navbar() {
 
                     {/* CTA & Mobile Toggle */}
                     <div className="flex items-center gap-6">
-                        <Link to="/contact" className="hidden md:block px-6 py-2.5 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-transform hover:-translate-y-0.5 shadow-lg shadow-blue-600/20">
+                        <button onClick={() => setQuoteModalOpen(true)} className="hidden md:block px-6 py-2.5 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-transform hover:-translate-y-0.5 shadow-lg shadow-blue-600/20">
                             Get a Quote
-                        </Link>
+                        </button>
 
                         {/* Mobile Menu Toggle */}
                         <button
@@ -175,13 +197,15 @@ export default function Navbar() {
                         <Link to="/contact" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">CONTACT</Link>
 
                         <div className="mt-8 w-full">
-                            <Link to="/contact" onClick={closeMenu} className="block w-full text-center px-8 py-4 bg-blue-600 text-white font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-colors shadow-lg">
+                            <button onClick={() => { closeMenu(); setQuoteModalOpen(true); }} className="block w-full text-center px-8 py-4 bg-blue-600 text-white font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-colors shadow-lg">
                                 Get a Quote
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <QuoteModal isOpen={quoteModalOpen} onClose={() => setQuoteModalOpen(false)} />
         </>
     );
 }

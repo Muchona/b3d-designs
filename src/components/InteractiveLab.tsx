@@ -4,9 +4,10 @@ export default function InteractiveLab() {
             {/* 3D Canvas Area - Refined and Scaled Down */}
             <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative overflow-hidden bg-gray-900 group rounded-2xl shadow-2xl border border-gray-200">
                 <iframe
-                    title="WORK"
+                    title="B3D Designs — Interactive 3D Architectural Showcase on Sketchfab"
                     className="w-full h-full border-0"
                     allowFullScreen
+                    loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; xr-spatial-tracking"
                     xr-spatial-tracking="true"
                     execution-while-out-of-viewport="true"

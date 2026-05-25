@@ -25,14 +25,25 @@ export default function Footer() {
                     </div>
 
                     {/* Navigation */}
-                    <div className="flex flex-col gap-6 text-center md:text-left w-full md:w-auto items-center md:items-start mb-12 md:mb-0">
-                        <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] text-gray-500 mb-4 md:hidden">Company</h4>
-                        <Link to="/about" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">About Us</Link>
-                        <Link to="/services/exterior-visualization" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Exterior Visualization</Link>
-                        <Link to="/services/interior-design" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Interior Design</Link>
-                        <Link to="/services/planning-permission" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Planning Permission</Link>
-                        <Link to="/services/virtual-reality" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Virtual Reality</Link>
-                        <Link to="/contact" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Contact us</Link>
+                    <div className="flex flex-col sm:flex-row gap-12 sm:gap-20 text-center sm:text-left w-full md:w-auto items-center sm:items-start mb-12 md:mb-0">
+                        {/* Company Links */}
+                        <div className="flex flex-col gap-6">
+                            <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] text-gray-500 mb-2">Company</h4>
+                            <Link to="/about" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">About Us</Link>
+                            <Link to="/#packages" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Packages</Link>
+                            <Link to="/contact" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Contact Us</Link>
+                        </div>
+                        
+                        {/* Services Links */}
+                        <div className="flex flex-col gap-6">
+                            <h4 className="font-bold uppercase tracking-[0.3em] text-[10px] text-gray-500 mb-2">Services</h4>
+                            <Link to="/services/2d-drafting" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">2D Drafting</Link>
+                            <Link to="/services/3d-modeling" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">3D Modeling</Link>
+                            <Link to="/services/exterior-visualization" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Exterior Visualization</Link>
+                            <Link to="/services/planning-permission" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Planning Permission</Link>
+                            <Link to="/services/augmented-reality" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Augmented Reality</Link>
+                            <Link to="/services/virtual-reality" className="text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">Virtual Reality</Link>
+                        </div>
                     </div>
 
                     {/* Newsletter */}
@@ -53,12 +64,12 @@ export default function Footer() {
                             {/* Social Icons */}
                             <div className="flex gap-6">
                                 {/* Instagram */}
-                                <a href="https://www.instagram.com/b3ddesign/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 transition-colors">
-                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10.5 3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM12 7c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
+                                <a href="https://www.instagram.com/b3ddesign/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 transition-colors" aria-label="Follow B3D Designs on Instagram">
+                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10.5 3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM12 7c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
                                 </a>
                                 {/* LinkedIn */}
-                                <a href="https://www.linkedin.com/in/fintan-blacklock-3d-designer/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 transition-colors">
-                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" /></svg>
+                                <a href="https://www.linkedin.com/in/fintan-blacklock-3d-designer/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 transition-colors" aria-label="Connect with B3D Designs on LinkedIn">
+                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" /></svg>
                                 </a>
                             </div>
 

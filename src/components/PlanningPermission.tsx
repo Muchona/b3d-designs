@@ -1,18 +1,47 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import useSEO from '../hooks/useSEO';
+import StructuredData from './StructuredData';
+import { getServiceSchema, getFAQSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 const images = import.meta.glob('../assets/planning permission/*.jpeg', { eager: true, query: '?url', import: 'default' });
 const projectImages = Object.values(images) as string[];
 
 export default function PlanningPermission() {
+    useSEO({
+        title: 'Planning Permission 3D Visuals | B3D Designs — Ireland',
+        description: 'Technical 2D/3D output adhering to Irish council regulations. Professional planning permission visualizations with DWG & PDF output for residential and commercial developments.',
+        keywords: 'planning permission Ireland, 3D planning visuals, council planning application, architectural drawings Ireland, planning permission renders, DWG drawings, site analysis visualization',
+    });
+
     return (
         <section className="bg-white min-h-screen">
+            <StructuredData data={[
+                getServiceSchema({
+                    name: 'Planning Permission Visuals',
+                    description: 'Technical 2D and 3D planning permission output adhering to Irish council regulations. Professional site analysis, floor plans, and environmental impact visualizations with DWG & PDF delivery.',
+                    url: 'https://b3ddesigns.ie/services/planning-permission',
+                }),
+                getFAQSchema([
+                    { question: 'Do you provide planning permission visuals for Irish councils?', answer: 'Yes, B3D Designs specializes in creating technical 2D and 3D outputs that adhere to Irish local council regulations. Our submissions include site analysis, detailed floor plans, and environmental impact visualizations.' },
+                    { question: 'What file formats do you deliver for planning applications?', answer: 'We deliver in DWG and PDF formats, which are standard for council submissions in Ireland. We also provide high-resolution renders for supporting documentation.' },
+                    { question: 'What is your success rate for planning permission visualizations?', answer: 'We have a high approval rate thanks to our meticulous attention to regulatory detail, accurate technical drawings, and comprehensive visual documentation that leaves no room for ambiguity.' },
+                ]),
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://b3ddesigns.ie/' },
+                    { name: 'Services', url: 'https://b3ddesigns.ie/#services' },
+                    { name: 'Planning Permission', url: 'https://b3ddesigns.ie/services/planning-permission' },
+                ]),
+            ]} />
+
             {/* Service Hero */}
             <div className="relative h-[60vh] w-full overflow-hidden flex items-center bg-gray-900">
                 <img
                     src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2531&auto=format&fit=crop"
                     className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    alt="Planning Permission"
+                    alt="Architectural blueprint and technical planning drawings for council submission"
+                    width="2531"
+                    height="1687"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
                 <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -77,7 +106,8 @@ export default function PlanningPermission() {
                                 <img
                                     src={src}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt={`Technical Project ${i}`}
+                                    alt={`Technical planning permission drawing ${i + 1}`}
+                                    loading="lazy"
                                 />
                             </motion.div>
                         ))}

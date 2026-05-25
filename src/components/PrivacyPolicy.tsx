@@ -1,6 +1,13 @@
 import { motion } from 'framer-motion';
+import useSEO from '../hooks/useSEO';
 
 export default function PrivacyPolicy() {
+    useSEO({
+        title: 'Privacy Policy | B3D Designs',
+        description: 'Learn how B3D Designs handles your personal data, including information collection, usage, and cookie policies.',
+        noindex: true,
+    });
+
     return (
         <section className="bg-white min-h-screen pt-32 pb-20">
             <div className="container mx-auto px-6 md:px-12 max-w-4xl">

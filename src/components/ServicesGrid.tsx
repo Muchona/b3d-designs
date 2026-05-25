@@ -9,13 +9,7 @@ const services = [
         image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
         link: "/services/exterior-visualization"
     },
-    {
-        title: "Interior Design",
-        desc: "Immersive kitchen and living space visualizations with accurate lighting.",
-        icon: "INT",
-        image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop",
-        link: "/services/interior-design"
-    },
+
     {
         title: "Planning Permission",
         desc: "Technical 2D/3D output adhering to local council regulations.",
@@ -47,7 +41,7 @@ export default function ServicesGrid() {
                 </div>
 
                 {/* Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {services.map((service, index) => (
                         <Link key={service.title} to={service.link} className="block w-full">
                             <motion.div

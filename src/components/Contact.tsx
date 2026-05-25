@@ -1,10 +1,33 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
+import useSEO from '../hooks/useSEO';
+import StructuredData from './StructuredData';
+import { getBreadcrumbSchema } from '../utils/structuredData';
 
 export default function Contact() {
+    useSEO({
+        title: 'Contact B3D Designs | Get a Free Quote — Dublin, Ireland',
+        description: 'Get in touch with B3D Designs for 3D architectural visualization, VR walkthroughs, and planning permission visuals. Based in Dun Laoghaire, Dublin, Ireland. Free project consultations.',
+        keywords: 'contact B3D Designs, architectural visualization quote, 3D design Dublin, VR walkthrough quote Ireland, free consultation architectural rendering',
+    });
+
     const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
+    const location = useLocation();
+    const [selectedPackage, setSelectedPackage] = useState("");
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const pkg = params.get('package');
+        if (pkg) {
+            const capitalized = pkg.charAt(0).toUpperCase() + pkg.slice(1);
+            if (['Silver', 'Gold', 'Platinum'].includes(capitalized)) {
+                setSelectedPackage(capitalized);
+            }
+        }
+    }, [location]);
 
     // Handle drag events
     const handleDrag = (e: React.DragEvent) => {
@@ -42,6 +65,12 @@ export default function Contact() {
 
     return (
         <section className="bg-white min-h-screen pt-28 pb-16">
+            <StructuredData data={[
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://b3ddesigns.ie/' },
+                    { name: 'Contact', url: 'https://b3ddesigns.ie/contact' },
+                ]),
+            ]} />
             <div className="container mx-auto px-6 md:px-12">
 
                 {/* Header */}
@@ -66,11 +95,36 @@ export default function Contact() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2, duration: 0.6 }}
                     >
-                        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                        <form action="https://api.web3forms.com/submit" method="POST" encType="multipart/form-data" className="space-y-6">
+                            {/* Web3Forms Access Key */}
+                            <input type="hidden" name="access_key" value="bf344976-db35-4bb5-959a-875a8541a078" />
+                            <input type="hidden" name="subject" value="New Contact Request from B3D Designs Website" />
+                            
+                            {/* Package Selection */}
+                            <div className="group relative">
+                                <select 
+                                    name="Interested Package"
+                                    value={selectedPackage}
+                                    onChange={(e) => setSelectedPackage(e.target.value)}
+                                    className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent text-gray-900 font-light appearance-none cursor-pointer"
+                                >
+                                    <option value="" disabled>Select a Package (Optional)</option>
+                                    <option value="Silver">Silver Package</option>
+                                    <option value="Gold">Gold Package</option>
+                                    <option value="Platinum">Platinum Package</option>
+                                    <option value="Custom">Custom / Other</option>
+                                </select>
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+
                             {/* Name */}
                             <div className="group">
                                 <input
                                     type="text"
+                                    name="name"
+                                    required
                                     placeholder="Your Name *"
                                     className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent placeholder-gray-600 font-light"
                                 />
@@ -80,16 +134,9 @@ export default function Contact() {
                             <div className="group">
                                 <input
                                     type="email"
+                                    name="email"
+                                    required
                                     placeholder="Your Email *"
-                                    className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent placeholder-gray-600 font-light"
-                                />
-                            </div>
-
-                            {/* CC */}
-                            <div className="group">
-                                <input
-                                    type="text"
-                                    placeholder="CC (separate by comma)"
                                     className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent placeholder-gray-600 font-light"
                                 />
                             </div>
@@ -98,6 +145,7 @@ export default function Contact() {
                             <div className="group">
                                 <input
                                     type="tel"
+                                    name="phone"
                                     placeholder="Your phone number"
                                     className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent placeholder-gray-600 font-light"
                                 />
@@ -106,6 +154,7 @@ export default function Contact() {
                             {/* Message */}
                             <div className="group">
                                 <textarea
+                                    name="message"
                                     placeholder="Your Message"
                                     rows={4}
                                     className="w-full border-b border-gray-300 py-3 text-base focus:outline-none focus:border-blue-600 transition-colors bg-transparent placeholder-gray-600 font-light resize-none"
@@ -124,6 +173,7 @@ export default function Contact() {
                                 <input
                                     ref={inputRef}
                                     type="file"
+                                    name="attachment"
                                     multiple
                                     className="hidden"
                                     onChange={handleChange}
@@ -151,7 +201,7 @@ export default function Contact() {
                             </div>
 
                             {/* Submit Button */}
-                            <button className="bg-blue-600 text-white px-8 py-3.5 font-bold uppercase tracking-widest hover:bg-blue-700 transition-transform hover:-translate-y-0.5 shadow-lg shadow-blue-600/30 text-sm rounded-sm w-full md:w-auto">
+                            <button type="submit" className="bg-blue-600 text-white px-8 py-3.5 font-bold uppercase tracking-widest hover:bg-blue-700 transition-transform hover:-translate-y-0.5 shadow-lg shadow-blue-600/30 text-sm rounded-sm w-full md:w-auto">
                                 Send us an email
                             </button>
                         </form>
@@ -167,34 +217,29 @@ export default function Contact() {
                             <h3 className="text-lg font-bold uppercase tracking-widest text-gray-900 mb-6 border-b border-gray-300 pb-3">Worldwide Office</h3>
 
                             <div className="mb-0 flex-grow">
-                                <h2 className="text-4xl font-display font-bold text-gray-900 mb-1">Dublin</h2>
-                                <h4 className="text-blue-600 font-bold uppercase tracking-wider mb-4 text-sm">Ireland</h4>
+                                <h2 className="text-4xl font-display font-bold text-gray-900 mb-1">Scotstown</h2>
+                                <h4 className="text-blue-600 font-bold uppercase tracking-wider mb-4 text-sm">Co Monaghan, Ireland</h4>
 
                                 <address className="not-italic text-gray-600 text-base leading-relaxed space-y-1 font-medium">
-                                    <p>Unit 1, Adelphi House</p>
-                                    <p>George's Street Upper</p>
-                                    <p>Dun Laoghaire, Co Dublin</p>
-                                    <p>Ireland, A96 DX47</p>
+                                    <p>Phone: <a href="tel:0851854029" className="hover:text-blue-600 transition-colors">085 185 4029</a></p>
+                                    <p>Email: <a href="mailto:b3ddesigns@outlook.ie" className="hover:text-blue-600 transition-colors">b3ddesigns@outlook.ie</a></p>
+                                    <p>Scotstown, Co Monaghan</p>
                                 </address>
                             </div>
 
-                            {/* Map - Adjusted height to balance */}
-                            <div className="mt-8 rounded-lg overflow-hidden shadow-sm border border-gray-200 h-56 relative bg-gray-200 group cursor-pointer hover:shadow-md transition-shadow">
-                                <img
-                                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2674&auto=format&fit=crop"
-                                    alt="Map Location"
-                                    className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-md shadow-sm text-[10px] font-bold uppercase tracking-widest text-gray-900">
-                                        View on Google Maps
-                                    </div>
-                                </div>
-                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full mt-[-10px] text-blue-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
+                            {/* Map */}
+                            <div className="mt-8 rounded-lg overflow-hidden shadow-sm border border-gray-200 h-56 relative bg-gray-200">
+                                <iframe 
+                                    src="https://maps.google.com/maps?q=Scotstown,+Co+Monaghan,+Ireland&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+                                    width="100%" 
+                                    height="100%" 
+                                    style={{ border: 0 }} 
+                                    allowFullScreen={false} 
+                                    loading="lazy" 
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Google Maps Location of Scotstown, Co Monaghan"
+                                    className="grayscale hover:grayscale-0 transition-all duration-500"
+                                ></iframe>
                             </div>
 
                         </div>

@@ -1,6 +1,13 @@
 import { motion } from 'framer-motion';
+import useSEO from '../hooks/useSEO';
 
 export default function Terms() {
+    useSEO({
+        title: 'Terms & Conditions | B3D Designs',
+        description: 'Terms and conditions governing the use of B3D Designs services and website.',
+        noindex: true,
+    });
+
     return (
         <section className="bg-white min-h-screen pt-32 pb-20">
             <div className="container mx-auto px-6 md:px-12 max-w-4xl">

@@ -1,11 +1,20 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import useSEO from '../hooks/useSEO';
+import StructuredData from './StructuredData';
+import { getServiceSchema, getFAQSchema, getBreadcrumbSchema } from '../utils/structuredData';
 
 const images = import.meta.glob('../assets/Exterior design/*.jpeg', { eager: true, query: '?url', import: 'default' });
 const projectImages = Object.values(images) as string[];
 
 export default function ExteriorVisualization() {
+    useSEO({
+        title: '3D Exterior Visualization | B3D Designs — Dublin, Ireland',
+        description: 'Photorealistic 3D exterior renders for planning permission, marketing brochures, and investor presentations. Council-approved quality from Dublin, Ireland. Serving Ireland, UK & worldwide.',
+        keywords: '3D exterior visualization, photorealistic renders, architectural visualization Ireland, planning permission renders, exterior design Dublin, 3D house rendering, property marketing visuals',
+    });
+
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -38,12 +47,32 @@ export default function ExteriorVisualization() {
 
     return (
         <section className="bg-white min-h-screen">
-            {/* ... keeping existing Hero ... */}
+            <StructuredData data={[
+                getServiceSchema({
+                    name: '3D Exterior Visualization',
+                    description: 'Photorealistic 3D exterior renders for planning permission, marketing brochures, and investor presentations. Ultra-realistic architectural visualization with accurate materials, lighting, and landscaping.',
+                    url: 'https://b3ddesigns.ie/services/exterior-visualization',
+                }),
+                getFAQSchema([
+                    { question: 'What is 3D exterior visualization?', answer: 'It is the process of creating photorealistic 3D renders of building exteriors before construction. B3D Designs creates ultra-realistic images showing materials, lighting, landscaping, and context for planning permission, marketing, and client presentations.' },
+                    { question: 'How are 3D exterior renders used for planning permission in Ireland?', answer: 'Council authorities in Ireland require visual documentation of proposed developments. Our photorealistic 3D exterior renders provide the clarity and technical accuracy needed to support planning applications, showing the proposed building in its real-world context.' },
+                    { question: 'How long does a 3D exterior visualization project take?', answer: 'Typical turnaround is 5-10 business days depending on project complexity. We offer rapid iteration to meet tight planning deadlines.' },
+                ]),
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://b3ddesigns.ie/' },
+                    { name: 'Services', url: 'https://b3ddesigns.ie/#services' },
+                    { name: '3D Exterior Visualization', url: 'https://b3ddesigns.ie/services/exterior-visualization' },
+                ]),
+            ]} />
+
+            {/* Hero Banner */}
             <div className="relative h-[60vh] w-full overflow-hidden flex items-center bg-gray-900">
                 <img
                     src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop"
                     className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    alt="Exterior Visualization"
+                    alt="Modern glass skyscraper showcasing 3D exterior architectural visualization"
+                    width="2670"
+                    height="1780"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
                 <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -109,7 +138,7 @@ export default function ExteriorVisualization() {
                                 <img
                                     src={src}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt={`Exterior Project ${i}`}
+                                    alt={`3D exterior visualization project render ${i + 1}`}
                                     loading="lazy"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
