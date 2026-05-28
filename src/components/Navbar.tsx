@@ -42,10 +42,12 @@ export default function Navbar() {
     }, [mobileMenuOpen]);
 
     const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+    const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
     const closeMenu = () => {
         setMobileMenuOpen(false);
         setServicesDropdownOpen(false);
+        setMobileServicesOpen(false);
     };
 
     const services = [
@@ -177,19 +179,44 @@ export default function Navbar() {
                     <div className="flex flex-col items-center gap-8 w-full max-w-xs">
                         <Link to="/" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">HOME</Link>
                         
-                        <Link 
-                            to="/#services" 
-                            onClick={(e) => {
-                                if (location.pathname === '/') {
-                                    e.preventDefault();
-                                    document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
-                                }
-                                closeMenu();
-                            }} 
-                            className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors uppercase"
-                        >
-                            Services
-                        </Link>
+                        <div className="w-full flex flex-col items-center">
+                            <button 
+                                onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                                className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors uppercase flex items-center gap-2"
+                            >
+                                Services
+                                <svg className={`w-5 h-5 transition-transform duration-300 ${mobileServicesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            
+                            {/* Mobile Services Dropdown */}
+                            <div className={`overflow-hidden transition-all duration-300 w-full flex flex-col items-center ${mobileServicesOpen ? 'max-h-[400px] mt-6 opacity-100' : 'max-h-0 mt-0 opacity-0'}`}>
+                                {services.map((service) => (
+                                    <Link
+                                        key={service.path}
+                                        to={service.path}
+                                        onClick={closeMenu}
+                                        className="py-3 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-blue-600 transition-colors text-center w-full"
+                                    >
+                                        {service.name}
+                                    </Link>
+                                ))}
+                                <Link 
+                                    to="/#services" 
+                                    onClick={(e) => {
+                                        if (location.pathname === '/') {
+                                            e.preventDefault();
+                                            document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                        closeMenu();
+                                    }} 
+                                    className="py-3 mt-2 text-xs font-bold uppercase tracking-widest text-blue-600 border-t border-gray-100 w-3/4 text-center"
+                                >
+                                    View All Services
+                                </Link>
+                            </div>
+                        </div>
 
                         <Link 
                             to="/#packages" 
