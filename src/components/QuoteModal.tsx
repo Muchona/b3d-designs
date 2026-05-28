@@ -52,8 +52,14 @@ export default function QuoteModal({ isOpen, onClose }: QuoteModalProps) {
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link
-                                to="/packages"
-                                onClick={onClose}
+                                to="/#packages"
+                                onClick={(e) => {
+                                    onClose();
+                                    if (window.location.pathname === '/') {
+                                        e.preventDefault();
+                                        document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }}
                                 className="flex-1 px-6 py-3 bg-blue-600 text-white text-center text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-blue-700 transition-transform hover:-translate-y-0.5 shadow-lg shadow-blue-600/20"
                             >
                                 View Packages
