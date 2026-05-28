@@ -176,22 +176,34 @@ export default function Navbar() {
                 <div className="flex flex-col items-center justify-center min-h-screen py-20 px-6 overflow-y-auto">
                     <div className="flex flex-col items-center gap-8 w-full max-w-xs">
                         <Link to="/" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">HOME</Link>
+                        
+                        <Link 
+                            to="/#services" 
+                            onClick={(e) => {
+                                if (location.pathname === '/') {
+                                    e.preventDefault();
+                                    document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+                                }
+                                closeMenu();
+                            }} 
+                            className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors uppercase"
+                        >
+                            Services
+                        </Link>
 
-                        <div className="w-full">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Our Services</p>
-                            <div className="flex flex-col gap-4">
-                                {services.map((service) => (
-                                    <Link
-                                        key={service.path}
-                                        to={service.path}
-                                        onClick={closeMenu}
-                                        className="text-lg font-display font-medium text-gray-700 hover:text-blue-600 transition-colors text-center"
-                                    >
-                                        {service.name}
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
+                        <Link 
+                            to="/#packages" 
+                            onClick={(e) => {
+                                if (location.pathname === '/') {
+                                    e.preventDefault();
+                                    document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
+                                }
+                                closeMenu();
+                            }} 
+                            className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors uppercase"
+                        >
+                            Packages
+                        </Link>
 
                         <Link to="/about" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">ABOUT</Link>
                         <Link to="/contact" onClick={closeMenu} className="text-2xl font-display font-bold text-gray-900 hover:text-blue-600 transition-colors">CONTACT</Link>
